@@ -20,4 +20,4 @@
         log.Println("finished")
     }
 
-The package currently supports linux, solaris and windows.
+The package currently supports `linux`, `solaris` and `windows`.
