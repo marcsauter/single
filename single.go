@@ -10,6 +10,8 @@ import (
 var (
 	// ErrAlreadyRunning
 	ErrAlreadyRunning = errors.New("the program is already running")
+	//
+	Lockfile string
 )
 
 // Single represents the name and the open file descriptor
