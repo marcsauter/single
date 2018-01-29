@@ -4,13 +4,14 @@ package single
 
 import (
 	"errors"
+	"log"
 	"os"
 )
 
 var (
-	// ErrAlreadyRunning
+	// ErrAlreadyRunning -- the instance is already running
 	ErrAlreadyRunning = errors.New("the program is already running")
-	//
+	// Lockfile -- the lock file to check
 	Lockfile string
 )
 
@@ -23,4 +24,11 @@ type Single struct {
 // New creates a Single instance
 func New(name string) *Single {
 	return &Single{name: name}
+}
+
+// Lock tries to obtain an exclude lock on a lockfile and exits the program if an error occurs
+func (s *Single) Lock() {
+	if err := s.CheckLock(); err != nil {
+		log.Fatal(err)
+	}
 }
