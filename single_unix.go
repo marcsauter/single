@@ -8,12 +8,13 @@ import (
 	"syscall"
 )
 
-// Lock tries to obtain an exclude lock on a lockfile and exits the program if an error occurs
-func (s *Single) Lock() {
+// CheckLock tries to obtain an exclude lock on a lockfile and returns an error if one occurs
+func (s *Single) CheckLock() error {
+
 	// open/create lock file
 	f, err := os.OpenFile(s.Filename(), os.O_RDWR|os.O_CREATE, 0600)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 	s.file = f
 	// set the lock type to F_WRLCK, therefor the file has to be opened writable
@@ -23,8 +24,10 @@ func (s *Single) Lock() {
 	}
 	// try to obtain an exclusive lock - FcntlFlock seems to be the portable *ix way
 	if err := syscall.FcntlFlock(s.file.Fd(), syscall.F_SETLK, &flock); err != nil {
-		log.Fatal(ErrAlreadyRunning)
+		return ErrAlreadyRunning
 	}
+
+	return nil
 }
 
 // Unlock releases the lock, closes and removes the lockfile. All errors will be reported directly.
