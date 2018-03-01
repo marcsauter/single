@@ -1,4 +1,4 @@
-// +build linux solaris darwin
+// +build linux solaris darwin freebsd
 
 package single
 
