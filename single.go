@@ -32,3 +32,10 @@ func (s *Single) Lock() {
 		log.Fatal(err)
 	}
 }
+
+// Unlock releases the lock, closes and removes the lockfile. All errors will be reported directly.
+func (s *Single) Unlock() {
+	if err := s.TryUnlock(); err != nil {
+		log.Print(err)
+	}
+}

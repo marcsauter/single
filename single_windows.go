@@ -4,7 +4,6 @@ package single
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"path/filepath"
 )
@@ -33,12 +32,13 @@ func (s *Single) CheckLock() error {
 	return nil
 }
 
-// Unlock closes and removes the lockfile.
-func (s *Single) Unlock() {
+// TryUnlock closes and removes the lockfile
+func (s *Single) TryUnlock() error {
 	if err := s.file.Close(); err != nil {
-		log.Print(err)
+		return fmt.Errorf("failed to close the lock file: %v", err)
 	}
 	if err := os.Remove(s.Filename()); err != nil {
-		log.Print(err)
+		return fmt.Errorf("failed to remove the lock file: %v", err)
 	}
+	return nil
 }
