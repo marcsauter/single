@@ -3,7 +3,7 @@
 package single
 
 import (
-	"log"
+	"fmt"
 	"os"
 	"syscall"
 )
@@ -30,20 +30,21 @@ func (s *Single) CheckLock() error {
 	return nil
 }
 
-// Unlock releases the lock, closes and removes the lockfile. All errors will be reported directly.
-func (s *Single) Unlock() {
+// TryUnlock unlocks, closes and removes the lockfile
+func (s *Single) TryUnlock() error {
 	// set the lock type to F_UNLCK
 	flock := syscall.Flock_t{
 		Type: syscall.F_UNLCK,
 		Pid:  int32(os.Getpid()),
 	}
 	if err := syscall.FcntlFlock(s.file.Fd(), syscall.F_SETLK, &flock); err != nil {
-		log.Print(err)
+		return fmt.Errorf("failed to unlock the lock file: %v", err)
 	}
 	if err := s.file.Close(); err != nil {
-		log.Print(err)
+		return fmt.Errorf("failed to close the lock file: %v", err)
 	}
 	if err := os.Remove(s.Filename()); err != nil {
-		log.Print(err)
+		return fmt.Errorf("failed to remove the lock file: %v", err)
 	}
+	return nil
 }
